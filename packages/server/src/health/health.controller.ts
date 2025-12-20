@@ -8,6 +8,7 @@ import {
 	HttpHealthIndicator,
 	MemoryHealthIndicator,
 } from "@nestjs/terminus";
+import { AppConfig } from "@/config/configuration";
 
 @Controller("health")
 export class HealthController {
@@ -16,7 +17,7 @@ export class HealthController {
 		private memory: MemoryHealthIndicator,
 		private disk: DiskHealthIndicator,
 		private http: HttpHealthIndicator,
-		private configService: ConfigService,
+		private configService: ConfigService<AppConfig>,
 	) {}
 
 	/**
@@ -27,11 +28,11 @@ export class HealthController {
 	@HealthCheck()
 	check() {
 		const memoryHeapThreshold =
-			this.configService.get<number>("HEALTH_MEMORY_HEAP_THRESHOLD_MB", 150) *
+			this.configService.get("HEALTH_MEMORY_HEAP_THRESHOLD_MB", 150) *
 			1024 *
 			1024;
 		const memoryRSSThreshold =
-			this.configService.get<number>("HEALTH_MEMORY_RSS_THRESHOLD_MB", 500) *
+			this.configService.get("HEALTH_MEMORY_RSS_THRESHOLD_MB", 500) *
 			1024 *
 			1024;
 
@@ -73,7 +74,7 @@ export class HealthController {
 	@HealthCheck()
 	async liveness(): Promise<HealthCheckResult> {
 		const memoryHeapThreshold =
-			this.configService.get<number>("HEALTH_MEMORY_HEAP_THRESHOLD_MB", 150) *
+			this.configService.get("HEALTH_MEMORY_HEAP_THRESHOLD_MB", 150) *
 			1024 *
 			1024;
 
